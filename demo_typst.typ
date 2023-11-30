@@ -25,6 +25,15 @@
 
 We have discovered that the elemental energy of the world is closely related to the elemental attributes of the characters. When a character comes into contact with elemental energy, it triggers an energy recovery. The energy recovery value for the corresponding character is influenced by factors such as team size, the elemental attribute of the character and the elemental energy, and the elemental recharge efficiency.
 
+Our formula is given below:
+
+$ 
+cal(A r k n i g h t s) = lim_(n -> inf)  sum_(i=1)^n ((E_(i,"in") dot C_(i,"eff"))/T_i - E_(i,"out")D_(i,"eff") )
+ $
+
+In this formula, $E_(i,"in")$ represents the incoming elemental energy, $C_(i,"eff" )$ stands for the effective conversion coefficient, $T_i$ denotes the transfer efficiency, $E_(i,"out")$ is the outgoing elemental energy, and $D_(i,"in")$ represents the effective dissipation coefficient. This equation could describe the process involving the interaction and transformation of elemental energies within the context of elemental studies in the Genshin world.
+
+
 #theorem("Character Energy Regeneration")[
   When a character in the field comes into contact with energy drops (referred to as "spheres" hereafter, including particles or crystals), it triggers an energy recovery. Both on-field and off-field characters can obtain energy.
 
