@@ -1,4 +1,7 @@
-#import "metanote.typ": *
+#import "Typst/metanote.typ": *
+
+//  If you have created the local package, change this to 
+//  #import "@local/MetaNote:0.0.1": *
 
 #show: doc => MetaNote(
   title: [
