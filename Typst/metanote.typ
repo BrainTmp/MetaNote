@@ -6,6 +6,7 @@
 #let note = metamathbox("note", "Note", rgb(0, 77, 64)) // Material Teal 900
 #let definition = metamathbox("definition", "Definition", rgb(38, 50, 56)) // Material Blue Grey 900
 #let proposition = metamathbox("proposition", "Proposition", rgb(230, 81, 0)) // Material Orange 900
+#let exercise = metamathbox("exercise", "Exercise", rgb(26, 35, 126))
 
 #let proof = thmplain(
   "proof",

@@ -1,0 +1,7 @@
+[package]
+name = "MetaNote"
+version = "0.0.1"
+entrypoint = "metanote.typ"
+authors = ["timetraveler314"]
+license = "Unlicensed"
+description = "MetaNote - A simple note templete for everyday mathematics"
