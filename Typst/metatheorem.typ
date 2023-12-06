@@ -232,7 +232,8 @@
   doc
 }
 
-#let metamathbox = (identifier, name, color) => showythmbox(identifier, name, title-style: (
+#let metamathbox = (identifier, name, color, type: "normal") => if type == "normal" {
+  showythmbox(identifier, name, title-style: (
     color: color,
     sep-thickness: 0pt,
     align: left
@@ -246,5 +247,19 @@
   ),
   namefmt: x => x
 )
-
-#let theorem = metamathbox("thm", "Theorem", rgb(13, 71, 161))
+} else {
+  showythmbox(identifier, name, title-style: (
+    color: color,
+    sep-thickness: 0pt,
+    align: left
+  ),
+  frame: (
+    title-color: color.lighten(95%),
+    border-color: color,
+    body-color: color.lighten(100%),
+    thickness: (left: 3pt, right: 0.5pt, bottom: 0.5pt, top: 0.5pt),
+    radius: 0pt
+  ),
+  namefmt: x => x
+  )
+}

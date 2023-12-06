@@ -19,6 +19,7 @@
       email: "GenshinTHU@gmail.com",
     ),
   ),
+  print: true,
   doc,
 )
 

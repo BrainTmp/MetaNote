@@ -6,7 +6,10 @@
 #let note = metamathbox("note", "Note", rgb(0, 77, 64)) // Material Teal 900
 #let definition = metamathbox("definition", "Definition", rgb(38, 50, 56)) // Material Blue Grey 900
 #let proposition = metamathbox("proposition", "Proposition", rgb(230, 81, 0)) // Material Orange 900
+#let question = metamathbox("question", "Question", rgb(26, 35, 126))
 #let exercise = metamathbox("exercise", "Exercise", rgb(26, 35, 126))
+#let hint = metamathbox("hint", "Hint", rgb(26, 35, 126))
+#let lemma = metamathbox("lemma", "Lemma", rgb(51, 105, 30))
 
 #let proof = thmplain(
   "proof",
@@ -26,6 +29,7 @@
   authors: (),
   doc,
   head_numbering: "1.1.",
+  print: false
 ) = {
   set heading(numbering: head_numbering)
 
