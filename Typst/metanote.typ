@@ -8,12 +8,19 @@
 #let proposition = metamathbox("proposition", "Proposition", rgb(230, 81, 0)) // Material Orange 900
 #let question = metamathbox("question", "Question", rgb(26, 35, 126))
 #let exercise = metamathbox("exercise", "Exercise", rgb(26, 35, 126))
+#let exerciseb = metamathbox("exercise", "Exercise", rgb(26, 35, 126)).with(numbering: none)
 #let hint = metamathbox("hint", "Hint", rgb(26, 35, 126))
 #let lemma = metamathbox("lemma", "Lemma", rgb(51, 105, 30))
 
 #let proof = thmplain(
   "proof",
   "Proof",
+  bodyfmt: body => [#body #h(1fr) $square$]
+).with(numbering: none)
+
+#let proofsk = thmplain(
+  "proofsk",
+  "Proof Sketch",
   bodyfmt: body => [#body #h(1fr) $square$]
 ).with(numbering: none)
 
@@ -29,9 +36,28 @@
   authors: (),
   doc,
   head_numbering: "1.1.",
+  head_mode: "note",
   print: false
 ) = {
-  set heading(numbering: head_numbering)
+  let head_mode_func = (mode) => {
+    if head_mode == "note" {
+      return head_numbering
+    } else if head_mode == "book" {
+      return (..nums) => {
+        if nums.pos().len() == 1 {
+          return "Chapter " + nums.pos().map(str).join(".") + "" + math.quad
+        } else if nums.pos().len() == 2 {
+          return "Section " + nums.pos().map(str).join(".") + "" + math.quad
+        } else {
+          return nums.pos().map(str).join(".")
+        }
+      }
+    }
+  }
+
+  set heading(numbering: head_mode_func(head_mode))
+
+  // set par(first-line-indent: 1em, justify: true)
 
   set align(center)
   text(17pt, title)
