@@ -1,5 +1,7 @@
 #import "metatheorem.typ": *
 
+#import "@preview/great-theorems:0.1.0": *
+
 #let theorem = metamathbox("theorem", "Theorem", rgb(13, 71, 161)) // Material Blue 900
 #let example = metamathbox("example", "Example", rgb(51, 105, 30)) // Material Light Green 900
 #let corollary = metamathbox("corollary", "Corollary", rgb(26, 35, 126)) // Material Indigo 900
@@ -12,24 +14,17 @@
 #let hint = metamathbox("hint", "Hint", rgb(26, 35, 126))
 #let lemma = metamathbox("lemma", "Lemma", rgb(51, 105, 30))
 
-#let proof = thmplain(
-  "proof",
-  "Proof",
-  bodyfmt: body => [#body #h(1fr) $square$]
-).with(numbering: none)
-
-#let proofsk = thmplain(
-  "proofsk",
-  "Proof Sketch",
-  bodyfmt: body => [#body #h(1fr) $square$]
-).with(numbering: none)
-
-#let solution = thmplain(
-  "solution",
-  "Solution",
-  bodyfmt: body => [#body #h(1fr) $square$]
-).with(numbering: none)
-
+#let proof = proofblock(breakable: true)
+#let proofsk = proofblock(
+  blocktitle: "Proof Sketch",
+  prefix: [_Proof Sketch._],
+  breakable: true
+)
+#let solution = proofblock(
+  blocktitle: "Solution",
+  prefix: [_Solution._],
+  breakable: true
+)
 
 #let MetaNote(
   title: none,
@@ -37,8 +32,19 @@
   doc,
   head_numbering: "1.1.",
   head_mode: "note",
+  lang: none,
+  font: "FZShuSong-Z01",
   print: false
 ) = {
+  // if (lang != none) {
+  //   if lang == "cn" {
+  //     if font {
+  //       set text(font:("Charter", "Noto Serif CJK SC"), lang: "cn")
+  //     }
+  //   }
+  // }
+  set text(font:("Charter", "Noto Serif CJK SC"))
+
   let head_mode_func = (mode) => {
     if head_mode == "note" {
       return head_numbering
@@ -76,6 +82,7 @@
 
   set align(left)
   show: thmrules 
+  show: great-theorems-init
 
   doc
 }
