@@ -1,18 +1,45 @@
 #import "metatheorem.typ": *
 
-#import "@preview/great-theorems:0.1.0": *
+#let counter-map(..identifiers) = {
+  // Create a dictionary to hold the counters
+  let map = (:)
+  // Process each identifier
+  for identifier in identifiers.pos() {
+    map.insert(
+      identifier, 
+      rich-counter(
+        identifier: identifier,
+        inherited_levels: 1
+      )
+    )
+  }
+  map
+}
 
-#let theorem = metamathbox("theorem", "Theorem", rgb(13, 71, 161)) // Material Blue 900
-#let example = metamathbox("example", "Example", rgb(51, 105, 30)) // Material Light Green 900
-#let corollary = metamathbox("corollary", "Corollary", rgb(26, 35, 126)) // Material Indigo 900
+#let counters = counter-map(
+  "theorem",
+  "example",
+  "corollary",
+  "note",
+  "definition",
+  "proposition",
+  "question",
+  "exercise",
+  "hint",
+  "lemma"
+)
+
+#let theorem = metamathbox("theorem", "Theorem", rgb(13, 71, 161), counter: counters.at("theorem")) // Material Blue 900
+#let example = metamathbox("example", "Example", rgb(51, 105, 30), counter: counters.at("example")) // Material Light Green 900
+#let corollary = metamathbox("corollary", "Corollary", rgb(26, 35, 126), counter: counters.at("corollary")) // Material Indigo 900
 #let note = metamathbox("note", "Note", rgb(0, 77, 64)) // Material Teal 900
-#let definition = metamathbox("definition", "Definition", rgb(38, 50, 56)) // Material Blue Grey 900
-#let proposition = metamathbox("proposition", "Proposition", rgb(230, 81, 0)) // Material Orange 900
-#let question = metamathbox("question", "Question", rgb(26, 35, 126))
-#let exercise = metamathbox("exercise", "Exercise", rgb(26, 35, 126))
-#let exerciseb = metamathbox("exercise", "Exercise", rgb(26, 35, 126)).with(numbering: none)
+#let definition = metamathbox("definition", "Definition", rgb(38, 50, 56), counter: counters.at("definition")) // Material Blue Grey 900
+#let proposition = metamathbox("proposition", "Proposition", rgb(230, 81, 0), counter: counters.at("proposition")) // Material Orange 900
+#let question = metamathbox("question", "Question", rgb(26, 35, 126), counter: counters.at("question"))
+#let exercise = metamathbox("exercise", "Exercise", rgb(26, 35, 126), counter: counters.at("exercise")) 
+// #let exerciseb = metamathbox("exercise", "Exercise", rgb(26, 35, 126)).with(numbering: none)
 #let hint = metamathbox("hint", "Hint", rgb(26, 35, 126))
-#let lemma = metamathbox("lemma", "Lemma", rgb(51, 105, 30))
+#let lemma = metamathbox("lemma", "Lemma", rgb(51, 105, 30), counter: counters.at("lemma"))
 
 #let proof = proofblock(breakable: true)
 #let proofsk = proofblock(
@@ -30,20 +57,14 @@
   title: none,
   authors: (),
   doc,
-  head_numbering: "1.1.",
+  head_numbering: "1.1.1.",
   head_mode: "note",
   lang: none,
   font: "FZShuSong-Z01",
   print: false
 ) = {
-  // if (lang != none) {
-  //   if lang == "cn" {
-  //     if font {
-  //       set text(font:("Charter", "Noto Serif CJK SC"), lang: "cn")
-  //     }
-  //   }
-  // }
-  set text(font:("Charter", "Noto Serif CJK SC"))
+  show: great-theorems-init
+  // set text(font:("Charter"))
 
   let head_mode_func = (mode) => {
     if head_mode == "note" {
@@ -81,8 +102,6 @@
   )
 
   set align(left)
-  show: thmrules 
-  show: great-theorems-init
 
   doc
 }

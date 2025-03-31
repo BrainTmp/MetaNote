@@ -1,265 +1,113 @@
-#import "@preview/showybox:2.0.1": showybox
+// Third-Party Attributions  
+// This project includes modified code from the following MIT-licensed works:  
 
-#let thmcounters = state("thm",
-  (
-    "counters": ("heading": ()),
-    "latest": ()
-  )
-)
+// - **`great-theorems`** by jbirnick  
+//   Source: [https://github.com/jbirnick/typst-great-theorems](https://github.com/jbirnick/typst-great-theorems)  
+//   Modifications: Custom styling with `showybox`, layout changes, and theorem numbering adjustments.
 
-#let thmenv(identifier, base, base_level, fmt) = {
+#import "@preview/showybox:2.0.4": showybox
+#import "@preview/great-theorems:0.1.2": *
+#import "@preview/rich-counters:0.2.2": *
 
-  let global_numbering = numbering
-
-  return (
-    ..args,
-    body,
-    number: auto,
-    numbering: "1.1",
-    refnumbering: auto,
-    supplement: identifier,
-    base: base,
-    base_level: base_level
-  ) => {
-    let name = none
-    if args != none and args.pos().len() > 0 {
-      name = args.pos().first()
-    }
-    if refnumbering == auto {
-      refnumbering = numbering
-    }
-    let result = none
-    if number == auto and numbering == none {
-      number = none
-    }
-    if number == auto and numbering != none {
-      result = locate(loc => {
-        return thmcounters.update(thmpair => {
-          let counters = thmpair.at("counters")
-          // Manually update heading counter
-          counters.at("heading") = counter(heading).at(loc)
-          if not identifier in counters.keys() {
-            counters.insert(identifier, (0, ))
-          }
-
-          let tc = counters.at(identifier)
-          if base != none {
-            let bc = counters.at(base)
-
-            // Pad or chop the base count
-            if base_level != none {
-              if bc.len() < base_level {
-                bc = bc + (0,) * (base_level - bc.len())
-              } else if bc.len() > base_level{
-                bc = bc.slice(0, base_level)
-              }
-            }
-
-            // Reset counter if the base counter has updated
-            if tc.slice(0, -1) == bc {
-              counters.at(identifier) = (..bc, tc.last() + 1)
-            } else {
-              counters.at(identifier) = (..bc, 1)
-            }
-          } else {
-            // If we have no base counter, just count one level
-            counters.at(identifier) = (tc.last() + 1,)
-            let latest = counters.at(identifier)
-          }
-
-          let latest = counters.at(identifier)
-          return (
-            "counters": counters,
-            "latest": latest
-          )
-        })
-      })
-
-      number = thmcounters.display(x => {
-        return global_numbering(numbering, ..x.at("latest"))
-      })
-    }
-
-    return figure(
-      result +  // hacky!
-      fmt(name, number, body, ..args.named()) +
-      [#metadata(identifier) <meta:thmenvcounter>],
-      kind: "thmenv",
-      outlined: false,
-      caption: name,
-      supplement: supplement,
-      numbering: refnumbering,
-    )
+#let showythmbox(blocktitle: none, counter: none, numbering: "1.1", prefix: auto, titlix: title => [#title], suffix: none, bodyfmt: body => body, ..global_block_args) = {
+  // check if blocktitle was provided
+  if blocktitle == none {
+    panic("You have created a `mathblock` without a `blocktitle`. Please provide a `blocktitle` like \"Theorem\" or \"Lemma\" or \"Proof\".")
   }
-}
 
-#let thmbox(
-  identifier,
-  head,
-  ..blockargs,
-  supplement: auto,
-  padding: (top: 0.5em, bottom: 0.5em),
-  namefmt: x => [(#x)],
-  titlefmt: strong,
-  bodyfmt: x => x,
-  separator: [#h(0.1em):#h(0.2em)],
-  base: "heading",
-  base_level: none,
-) = {
-  if supplement == auto {
-    supplement = head
-  }
-  let boxfmt(name, number, body, title: auto) = {
-    if not name == none {
-      name = [ #namefmt(name)]
+  // set the default prefix
+  if prefix == auto {
+    if counter == none {
+      prefix = [*#blocktitle.*]
     } else {
-      name = []
+      prefix = (counter) => [*#blocktitle #counter.*]
     }
-    if title == auto {
-      title = head
-    }
-    if not number == none {
-      title += " " + number
-    }
-    title = titlefmt(title)
-    body = bodyfmt(body)
-    pad(
-      ..padding,
-      block(
-        width: 100%,
-        inset: 1.2em,
-        radius: 0.3em,
-        breakable: false,
-        ..blockargs.named(),
-        [#title#name#separator#body]
-      )
-    )
   }
-  return thmenv(
-    identifier,
-    base,
-    base_level,
-    boxfmt
-  ).with(
-    supplement: supplement,
-  )
-}
 
-#let showythmbox(
-  identifier,
-  head,
-  ..blockargs,
-  supplement: auto,
-  padding: (top: 0.5em, bottom: 0.5em),
-  namefmt: x => [(#x)],
-  titlefmt: strong,
-  bodyfmt: x => x,
-  separator: [#h(0.1em):#h(0.2em)],
-  base: "heading",
-  base_level: none,
-) = {
-  if supplement == auto {
-    supplement = head
+  // check consistency of `counter` and `prefix`
+  if counter == none and type(prefix) == function {
+    panic("You have created a `mathblock` without a `counter` but with a `prefix` that accepts a counter. This is inconsistent. If you want a counter, then provide it with the `counter` argument (see documentation). If you don't want a counter, then you need to set a `prefix` that doesn't depend on a counter (see documentation).")
+  } else if counter != none and type(prefix) != function {
+    panic("You have created a `mathblock` with a `counter` but with a `prefix` that doesn't depend on a counter. This is inconsistent. If you don't want a counter, then remove the `counter` argument. If you want a counter, then set a prefix that depends on a counter (see documentation).")
   }
-  let boxfmt(name, number, body, title: auto) = {
-    if not name == none {
-      name = [ #namefmt(name)]
-    } else {
-      name = []
-    }
-    if title == auto {
-      title = head
-    }
-    if not number == none {
-      title += " " + number
-    }
-    title = titlefmt(title)
-    body = bodyfmt(body)
-    pad(
-      ..padding,
-      showybox(
-        ..blockargs.named(),
-        title: title + name
-      )[#body]
-    )
-  }
-  return thmenv(
-    identifier,
-    base,
-    base_level,
-    boxfmt
-  ).with(
-    supplement: supplement,
-  )
-}
 
-#let thmplain = thmbox.with(
-  padding: (top: 0em, bottom: 0em),
-  breakable: true,
-  inset: (top: 0em, left: 1.2em, right: 1.2em),
-  namefmt: name => emph([(#name)]),
-  titlefmt: emph,
-)
-
-#let thmrules(doc) = {
-  show figure.where(kind: "thmenv"): it => it.body
-
-  show ref: it => {
-    if it.element == none {
-      return it
-    }
-    if it.element.func() != figure {
-      return it
-    }
-    if it.element.kind != "thmenv" {
-      return it
-    }
-
-    let supplement = it.element.supplement
-    if it.citation.supplement != none {
-      supplement = it.citation.supplement
-    }
-
-    let loc = it.element.location()
-    let thms = query(selector(<meta:thmenvcounter>).after(loc), loc)
-    let number = thmcounters.at(thms.first().location()).at("latest")
-    return link(
-      it.target,
-      [#supplement~#numbering(it.element.numbering, ..number)]
+  // wrap native counter
+  if counter != none and type(counter) != dictionary {
+    counter = (
+      step: (..args) => { counter.step(..args) },
+      get: (..args) => { counter.get(..args) },
+      at: (..args) => { counter.at(..args) },
+      display: (..args) => { counter.display(..args) },
     )
   }
 
-  doc
+  // return the environment for the user
+  if counter != none {
+    return (title: none, numbering: numbering, prefix: prefix, titlix: titlix, suffix: suffix, bodyfmt: bodyfmt, number: auto, ..local_block_args, body) => {
+      figure(kind: "great-theorem-counted", supplement: blocktitle, outlined: false)[
+        #if number == auto [
+          // step and counter
+          #(counter.step)()
+          #{number = context (counter.display)(numbering)}
+          // store counter so reference can get counter value
+          // NOTE: alternatively could store result of counter.get(), but then it would take one more layout iteration
+          #metadata((loc) => { std.numbering(numbering, ..((counter.at)(loc))) })
+          #label("great-theorems:numberfunc")
+        ] else [
+          // store manual number for reference
+          #metadata((loc) => number)
+          #label("great-theorems:numberfunc")
+        ]
+
+        #showybox(..global_block_args.named(), ..local_block_args.named(),
+        title: prefix(number) + if title != none {
+          " " + titlix(title)
+        } else {
+          none
+        },
+      )[
+        // show content
+        // Modification: only show the body, since showybox already has the title
+        #bodyfmt(body)
+        #suffix
+        #parbreak()
+      ]]
+    }
+  } else {
+    return (title: none, numbering: numbering, prefix: prefix, titlix: titlix, suffix: suffix, bodyfmt: bodyfmt, ..local_block_args, body) => {
+      figure(kind: "great-theorem-uncounted", supplement: blocktitle, outlined: false)[#showybox(..global_block_args.named(), ..local_block_args.named(),
+        title: prefix + if title != none {
+          " " + titlix(title)
+         } else {
+           none
+         },
+      )[
+        // show content
+        // Modification: only show the body, since showybox already has the title
+        #bodyfmt(body)
+        #suffix
+        #parbreak()
+      ]]
+    }
+  }
 }
 
-#let metamathbox = (identifier, name, color, type: "normal") => if type == "normal" {
-  showythmbox(identifier, name, title-style: (
-    color: color,
-    sep-thickness: 0pt,
-    align: left
-  ),
-  frame: (
-    title-color: color.lighten(95%),
-    border-color: color,
-    body-color: color.lighten(95%),
-    thickness: (left: 2pt),
-    radius: 0pt
-  ),
-  namefmt: x => x
-)
-} else {
-  showythmbox(identifier, name, title-style: (
-    color: color,
-    sep-thickness: 0pt,
-    align: left
-  ),
-  frame: (
-    title-color: color.lighten(95%),
-    border-color: color,
-    body-color: color.lighten(100%),
-    thickness: (left: 3pt, right: 0.5pt, bottom: 0.5pt, top: 0.5pt),
-    radius: 0pt
-  ),
-  namefmt: x => x
+#let metamathbox = (identifier, name, color, counter: none, type: "normal") => {
+  showythmbox(
+    blocktitle: name, 
+    counter: counter,
+    // The following params are passed to the showybox function
+    title-style: (
+      color: color,
+      sep-thickness: 0pt,
+      align: left
+    ),
+    frame: (
+      title-color: color.lighten(95%),
+      border-color: color,
+      body-color: color.lighten(95%),
+      thickness: (left: 2pt),
+      radius: 0pt
+    )
   )
 }
