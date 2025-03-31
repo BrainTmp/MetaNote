@@ -1,6 +1,6 @@
 [package]
 name = "MetaNote"
-version = "0.0.1"
+version = "0.0.2"
 entrypoint = "metanote.typ"
 authors = ["timetraveler314"]
 license = "Unlicensed"
