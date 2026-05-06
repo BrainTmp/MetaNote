@@ -26,7 +26,7 @@
       text(11pt, font: heading-font, subtitle)
     }
     
-    v(6pt)
+    v(10pt)
     
     // Authors (same style as report)
     let count = authors.len()
@@ -65,7 +65,7 @@
       text(10pt, date)
     }
     
-    v(12pt)
+    v(18pt)
   }
   
   // === Report: centered with subtitle and ruled ===
@@ -87,7 +87,7 @@
       text(12pt, font: heading-font, subtitle)
     }
     
-    v(8pt)
+    v(12pt)
     
     // Authors
     let count = authors.len()

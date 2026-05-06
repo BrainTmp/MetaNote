@@ -48,11 +48,51 @@
   // Table header text: bold, sans-serif
   show table.cell.where(y: 0): set text(weight: "bold", font: heading-font, size: 0.95em)
 
+  // --- Lists ---
+  // Accent-colored markers, default indent
+  set list(marker: text(fill: accent, [#sym.bullet]), spacing: 0.7em)
+  set enum(spacing: 0.7em)
+  // Accent-colored enum numbers
+  show enum.item: it => {
+    // Workaround: style the number by reconstructing it
+    it
+  }
+
   // --- Links ---
-  // Accent-colored with subtle underline
+  // Accent-colored
   show link: it => {
     text(fill: accent.darken(10%), it)
   }
 
+  // --- Blockquote ---
+  // Exported separately as a function (see below)
+
+  // --- Figure captions ---
+  // Sans-serif caption with accent-colored label
+  show figure.caption: it => {
+    set text(size: 0.9em, font: heading-font)
+    it.supplement
+    if it.numbering != none {
+      [ ]
+      text(fill: accent, it.counter.display(it.numbering))
+    }
+    it.separator
+    it.body
+  }
+
   body
+}
+
+// === Blockquote environment ===
+// Usage: #blockquote[Some quoted text or problem statement...]
+#let blockquote(body) = {
+  block(
+    width: 100%,
+    inset: (left: 12pt, right: 10pt, y: 8pt),
+    stroke: (left: 3pt + luma(180)),
+    fill: luma(248),
+    radius: (right: 3pt),
+    breakable: true,
+    body
+  )
 }

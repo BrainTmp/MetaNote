@@ -6,7 +6,7 @@
 #import "problem.typ": *
 #import "preset.typ": presets
 #import "layout.typ": make-header, make-footer, make-title, apply-heading-style
-#import "style.typ": apply-element-styles
+#import "style.typ": apply-element-styles, blockquote
 
 // Re-export dependencies needed by users
 #import "@preview/great-theorems:0.1.2": great-theorems-init
