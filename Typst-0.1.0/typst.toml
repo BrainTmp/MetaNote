@@ -1,0 +1,7 @@
+[package]
+name = "MetaNote"
+version = "0.1.0"
+entrypoint = "lib.typ"
+authors = ["timetraveler314"]
+license = "MIT"
+description = "MetaNote - A unified document template for homework, reports, and notes"
