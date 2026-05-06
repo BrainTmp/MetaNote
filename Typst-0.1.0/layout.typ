@@ -269,7 +269,7 @@
       line(length: 100%, stroke: 0.5pt + luma(180))
       v(8pt, weak: true)
     } else if it.level == 2 {
-      v(10pt, weak: true)
+      v(16pt, weak: true)
       text(12.5pt, weight: "bold", {
         if it.numbering != none {
           counter(heading).display()
@@ -279,7 +279,7 @@
       })
       v(6pt, weak: true)
     } else {
-      v(6pt, weak: true)
+      v(10pt, weak: true)
       text(11pt, weight: "bold", {
         if it.numbering != none {
           counter(heading).display()

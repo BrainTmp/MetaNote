@@ -6,6 +6,7 @@
 #import "problem.typ": *
 #import "preset.typ": presets
 #import "layout.typ": make-header, make-footer, make-title, apply-heading-style
+#import "style.typ": apply-element-styles
 
 // Re-export dependencies needed by users
 #import "@preview/great-theorems:0.1.2": great-theorems-init
@@ -40,6 +41,7 @@
   heading-numbering: auto,
   heading-supplement: auto,  // "Problem", "Exercise", "" etc. (auto = preset default)
   heading-font: auto,        // font for headings and page header (default: sans-serif)
+  accent-color: auto,        // theme color for code, tables, links (default: muted blue)
   par-indent: auto,
   par-justify: auto,
   font: auto,
@@ -65,6 +67,7 @@
   let par-justify = if par-justify != auto { par-justify } else { p.par-justify }
   let font = if font != auto { font } else { p.font }
   let heading-font = if heading-font != auto { heading-font } else { p.heading-font }
+  let accent-color = if accent-color != auto { accent-color } else { p.accent-color }
   
   // Resolve author info: normalize to a list of dicts
   let resolved-authors = if authors.len() > 0 {
@@ -96,6 +99,9 @@
   
   // Font setup
   set text(font: font, lang: lang)
+  
+  // Element styles (code, tables, links)
+  show: apply-element-styles.with(accent: accent-color, heading-font: heading-font)
   
   // Paragraph settings
   set par(justify: par-justify, first-line-indent: par-indent, leading: 0.65em)
